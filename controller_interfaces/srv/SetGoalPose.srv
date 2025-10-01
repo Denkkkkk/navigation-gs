@@ -1,0 +1,5 @@
+# 设置目标位姿服务
+geometry_msgs/PoseStamped goal_pose
+---
+bool success
+string message

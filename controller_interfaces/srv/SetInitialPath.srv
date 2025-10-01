@@ -1,0 +1,5 @@
+# 设置初始路径服务
+nav_msgs/Path initial_path
+---
+bool success
+string message

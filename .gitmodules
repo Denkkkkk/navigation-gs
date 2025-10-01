@@ -1,0 +1,6 @@
+[submodule "neupan_controller/third_parties/neupan"]
+	path = neupan_controller/third_parties/neupan
+	url = https://github.com/Symbiosis-X-Tech/NeuPAN-gs.git
+[submodule "small_gicp_relocalization/third_parties/small_gicp"]
+	path = small_gicp_relocalization/third_parties/small_gicp
+	url = https://github.com/Symbiosis-X-Tech/small_gicp.git

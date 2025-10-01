@@ -1,0 +1,22 @@
+#!/usr/bin/python3
+
+import rclpy
+from neupan_controller.neupan_core import NeupanCore
+from rclpy.executors import MultiThreadedExecutor
+
+def main(args=None):
+    rclpy.init(args=args)
+    neupan_node = NeupanCore()
+    executor = MultiThreadedExecutor(num_threads=4)
+    executor.add_node(neupan_node)
+    try:
+        executor.spin()  # <--- 显式使用多线程执行器
+    except KeyboardInterrupt:
+        pass
+    finally:
+        executor.shutdown()
+        neupan_node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
