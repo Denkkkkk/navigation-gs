@@ -7,9 +7,9 @@
     <xacro:include filename="sensor/velodyne.urdf.xacro" />
     <xacro:include filename="sensor/camera.urdf.xacro" />
     <!-- <xacro:include filename="laser.urdf.xacro" /> -->
-    <joint name="${ns}camera2base_link" type="fixed">
-        <parent link="${ns}vehicle" />
-        <child link="${ns}camera" />
+    <joint name="camera2base_link" type="fixed">
+        <parent link="vehicle" />
+        <child link="camera" />
         <origin xyz="0.2 0 0.12" rpy="0 0 0" />
         <axis xyz="0 0 0" />
     </joint>

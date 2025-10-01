@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:macro name="gazebo_control_plugin">
         <!-- mu1静,mu2动，kp 刚度系数 kd 阻尼系数 -->
-        <gazebo reference="${ns}front_left_wheel">
+        <gazebo reference="front_left_wheel">
             <mu1>0.0</mu1>
             <mu2>0.0</mu2>
             <kp>20000.0</kp>
@@ -11,7 +11,7 @@
             <maxVel>100.0</maxVel>
         </gazebo>
 
-        <gazebo reference="${ns}front_right_wheel">
+        <gazebo reference="front_right_wheel">
             <mu1>0.0</mu1>
             <mu2>0.0</mu2>
             <kp>20000.0</kp>
@@ -20,7 +20,7 @@
             <maxVel>100.0</maxVel>
         </gazebo>
 
-        <gazebo reference="${ns}back_left_wheel">
+        <gazebo reference="back_left_wheel">
             <mu1>0.0</mu1>
             <mu2>0.0</mu2>
             <kp>20000.0</kp>
@@ -29,7 +29,7 @@
             <maxVel>100.0</maxVel>
         </gazebo>
 
-        <gazebo reference="${ns}back_right_wheel">
+        <gazebo reference="back_right_wheel">
             <mu1>0.0</mu1>
             <mu2>0.0</mu2>
             <kp>20000.0</kp>

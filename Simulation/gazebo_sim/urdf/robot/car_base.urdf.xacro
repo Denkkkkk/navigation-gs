@@ -1,8 +1,8 @@
 
 <!-- 底盘 -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot">
-    <link name="${ns}base_footprint" />
-    <link name="${ns}vehicle">
+    <link name="base_footprint" />
+    <link name="vehicle">
         <visual>
             <geometry>
                 <box size="${car_length} ${car_width} ${car_height}" />
@@ -17,15 +17,15 @@
         <xacro:box_inertial_matrix m="3" l="${car_length}" w="${car_width}" h="${car_height}" />
     </link>
 
-    <joint name="${ns}vehicle2base_footprint" type="fixed">
-        <parent link="${ns}base_footprint" />
-        <child link="${ns}vehicle" />
+    <joint name="vehicle2base_footprint" type="fixed">
+        <parent link="base_footprint" />
+        <child link="vehicle" />
         <origin xyz="0.0 0.0 ${car_height/2+distance}" />
     </joint>
 
     <!-- 车轮宏函数 -->
     <xacro:macro name="wheel_func" params="link_name front_flag left_flag">
-        <link name="${ns}${link_name}_wheel">
+        <link name="${link_name}_wheel">
             <visual>
                 <geometry>
                     <sphere radius="${wheel_radius}" />
@@ -41,9 +41,9 @@
             </collision>
             <xacro:sphere_inertial_matrix m="4" r="${wheel_radius}" />
         </link>
-        <joint name="${ns}${link_name}2vehicle" type="fixed">
-            <parent link="${ns}vehicle" />
-            <child link="${ns}${link_name}_wheel" />
+        <joint name="${link_name}2vehicle" type="fixed">
+            <parent link="vehicle" />
+            <child link="${link_name}_wheel" />
             <origin xyz="${wheel_joint_x* front_flag} ${wheel_joint_y* left_flag} ${wheel_joint_z}" />
             <axis xyz="0.0 1.0 0.0" />
         </joint>
@@ -54,7 +54,7 @@
     <xacro:wheel_func link_name="back_left" front_flag="-1" left_flag="1" />
     <xacro:wheel_func link_name="back_right" front_flag="-1" left_flag="-1" />
 
-    <link name="${ns}lidar_holder">
+    <link name="lidar_holder">
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
@@ -69,17 +69,17 @@
         <xacro:cylinder_inertial_matrix m="0.1" r="${holder_radius}" h="${holder_length}" />
     </link>
 
-    <joint name="${ns}lidar_holder2vehicle" type="fixed">
+    <joint name="lidar_holder2vehicle" type="fixed">
         <origin xyz="0.0 0.0 ${car_height/2+holder_length/2}" rpy="0 0 0" />
-        <parent link="${ns}vehicle" />
-        <child link="${ns}lidar_holder" />
+        <parent link="vehicle" />
+        <child link="lidar_holder" />
     </joint>
 
-    <xacro:gazebo_material ref="${ns}vehicle" color="Red" />
-    <xacro:gazebo_material ref="${ns}lidar_holder" color="Black" />
-    <xacro:gazebo_material ref="${ns}front_left_wheel" color="Black" />
-    <xacro:gazebo_material ref="${ns}front_right_wheel" color="Black" />
-    <xacro:gazebo_material ref="${ns}back_left_wheel" color="Black" />
-    <xacro:gazebo_material ref="${ns}back_right_wheel" color="Black" />
+    <xacro:gazebo_material ref="vehicle" color="Red" />
+    <xacro:gazebo_material ref="lidar_holder" color="Black" />
+    <xacro:gazebo_material ref="front_left_wheel" color="Black" />
+    <xacro:gazebo_material ref="front_right_wheel" color="Black" />
+    <xacro:gazebo_material ref="back_left_wheel" color="Black" />
+    <xacro:gazebo_material ref="back_right_wheel" color="Black" />
 
 </robot>
