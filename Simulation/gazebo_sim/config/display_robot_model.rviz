@@ -28,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -60,7 +60,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /robot_description
+        Value: /denk/robot_description
       Enabled: true
       Links:
         All Links Enabled: true
@@ -68,46 +68,46 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        back_left_wheel:
+        denk/back_left_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        back_right_wheel:
+        denk/back_right_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        base_footprint:
+        denk/base_footprint:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        front_left_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_right_wheel:
+        denk/front_left_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        lidar_holder:
+        denk/front_right_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        vehicle:
+        denk/lidar_holder:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        velodyne:
+        denk/vehicle:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        velodyne_base_link:
+        denk/velodyne:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        denk/velodyne_base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -125,51 +125,43 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        back_left_wheel:
-          Value: false
-        back_right_wheel:
-          Value: false
-        base_footprint:
+        denk/back_left_wheel:
           Value: true
-        front_left_wheel:
-          Value: false
-        front_right_wheel:
-          Value: false
-        lidar_holder:
-          Value: false
-        map:
+        denk/back_right_wheel:
           Value: true
-        odom:
+        denk/base_footprint:
           Value: true
-        vehicle:
-          Value: false
-        velodyne:
-          Value: false
-        velodyne_base_link:
-          Value: false
+        denk/front_left_wheel:
+          Value: true
+        denk/front_right_wheel:
+          Value: true
+        denk/lidar_holder:
+          Value: true
+        denk/vehicle:
+          Value: true
+        denk/velodyne:
+          Value: true
+        denk/velodyne_base_link:
+          Value: true
       Marker Scale: 3
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        base_footprint:
-          vehicle:
-            back_left_wheel:
+        denk/base_footprint:
+          denk/vehicle:
+            denk/back_left_wheel:
               {}
-            back_right_wheel:
+            denk/back_right_wheel:
               {}
-            front_left_wheel:
+            denk/front_left_wheel:
               {}
-            front_right_wheel:
+            denk/front_right_wheel:
               {}
-            lidar_holder:
-              velodyne_base_link:
-                velodyne:
-                  {}
-        map:
-          odom:
-            {}
+            denk/lidar_holder:
+              denk/velodyne_base_link:
+                {}
       Update Interval: 0
       Value: true
     - Class: rviz_default_plugins/Image
@@ -278,7 +270,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_footprint
+    Fixed Frame: denk/base_footprint
     Frame Rate: 30
   Name: root
   Tools:

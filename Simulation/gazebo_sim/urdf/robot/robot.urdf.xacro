@@ -14,18 +14,18 @@
         <axis xyz="0 0 0" />
     </joint> -->
 
-    <xacro:VLP-16 parent="lidar_holder" name="velodyne" topic="/velodyne_points" hz="10"
-        min_range="0.55" samples="350" collision_range="0.56" gpu="false"
+    <xacro:VLP-16 namespace_prefix="${namespace_prefix}" parent="lidar_holder"  name="velodyne" topic="velodyne_points" hz="10"
+        min_range="0.55" samples="350" collision_range="0.56" organize_cloud="true" gpu="false"
         min_angle="-3.14159" max_angle="3.14159" vmin_angle="${-7/180*PI}" vmax_angle="${52/180*PI}">
         <origin xyz="0.0 0.0 ${holder_length/2}" rpy="0 0 0" />
     </xacro:VLP-16>
     <!-- <xacro:VLP-16 parent="vehicle" name="velodyne2" topic="/velodyne_points2" hz="10"
-        min_range="0.55" samples="350" collision_range="0.56" gpu="false"
+        min_range="0.55" samples="350" collision_range="0.56" organize_cloud="true" gpu="false"
         min_angle="-3.14159" max_angle="0" vmin_angle="${-7/180*PI}" vmax_angle="${52/180*PI}">
         <origin xyz="0.0 -0.2 ${car_height/2+0.02}" rpy="0 0 0" />
     </xacro:VLP-16> -->
 
-    <xacro:include filename="$(find gazebo_sim)/urdf/robot/plugins/gazebo_control_plugin.xacro" />
-    <xacro:gazebo_control_plugin />
+    <xacro:include filename="$(find gazebo_sim)/urdf/robot/plugins/gazebo_control_plugin_prefix.xacro" />
+    <xacro:gazebo_control_plugin hub_id="${hub_id}" />
 
 </robot>

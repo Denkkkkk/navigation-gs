@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:macro name="gazebo_control_plugin">
+    <xacro:macro name="gazebo_control_plugin" params="hub_id:=''">
+        <xacro:property name="namespace_prefix" value="${hub_id + '/' if hub_id else ''}" />
         <!-- mu1静,mu2动，kp 刚度系数 kd 阻尼系数 -->
-        <gazebo reference="front_left_wheel">
+        <gazebo reference="${namespace_prefix}front_left_wheel">
             <mu1>0.0</mu1>
             <mu2>0.0</mu2>
             <kp>20000.0</kp>
@@ -11,7 +12,7 @@
             <maxVel>100.0</maxVel>
         </gazebo>
 
-        <gazebo reference="front_right_wheel">
+        <gazebo reference="${namespace_prefix}front_right_wheel">
             <mu1>0.0</mu1>
             <mu2>0.0</mu2>
             <kp>20000.0</kp>
@@ -20,7 +21,7 @@
             <maxVel>100.0</maxVel>
         </gazebo>
 
-        <gazebo reference="back_left_wheel">
+        <gazebo reference="${namespace_prefix}back_left_wheel">
             <mu1>0.0</mu1>
             <mu2>0.0</mu2>
             <kp>20000.0</kp>
@@ -29,7 +30,7 @@
             <maxVel>100.0</maxVel>
         </gazebo>
 
-        <gazebo reference="back_right_wheel">
+        <gazebo reference="${namespace_prefix}back_right_wheel">
             <mu1>0.0</mu1>
             <mu2>0.0</mu2>
             <kp>20000.0</kp>
@@ -40,10 +41,10 @@
 
         <gazebo>
             <plugin name="planar_move_controller" filename="libgazebo_ros_planar_move.so">
-                <!-- 里程计和机器人基坐标系（可选，默认已匹配你的配置） -->
-                <odometry_frame>odom</odometry_frame>
-                <robot_base_frame>base_footprint</robot_base_frame>
-                <odometry_topic>odom</odometry_topic>
+                <!-- 里程计和机器人基坐标系，添加命名空间前缀 -->
+                <odometry_frame>${namespace_prefix}odom</odometry_frame>
+                <robot_base_frame>${namespace_prefix}base_footprint</robot_base_frame>
+                <odometry_topic>${namespace_prefix}odom</odometry_topic>
                 <!-- 发布频率（单位Hz） -->
                 <publish_rate>50</publish_rate>
                 <!-- 控制更新频率（可选，默认20Hz） -->
