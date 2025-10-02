@@ -19,20 +19,6 @@ from launch.actions import OpaqueFunction, LogInfo
 from launch.substitutions import LaunchConfiguration
 
 
-def sanity_check_function(context: LaunchContext, *args, **kwargs):
-    """ Function to perform sanity checks on the launch configuration parameters.
-        If `use_online_map` is False, maps_dir and scene_name must be valid.
-    
-    """
-    use_online_map = LaunchConfiguration('use_online_map').perform(context).lower() == 'true'
-    use_relocalization_default = LaunchConfiguration('use_relocalization').perform(context).lower() == 'ERROR_BOOL'
-    scene_name_default = LaunchConfiguration('scene_name').perform(context) == "ERROR_SCENE_NAME"
-    maps_dir_default = LaunchConfiguration('maps_dir').perform(context) == "ERROR_MAPS_DIR"
-
-    if (not use_online_map) and (scene_name_default or maps_dir_default or use_relocalization_default):
-        raise RuntimeError("Invalid `scene_name`, `maps_dir` or `use_relocalization`. Please provide valid ones via scene_name:=, maps_dir:= or use_relocalization:= .")
-    return []
-
 def generate_launch_description():
     ################ Declare arguments for CLI override ################
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -50,17 +36,17 @@ def generate_launch_description():
         default_value='False', 
         description='Whether to use online map, if set to true, the map server will not be started and the map will be loaded from /HUB_ID/map topic instead of a static file.'
     )
+    urdf_package_path=get_package_share_directory('gazebo_sim')
     declare_scene_name_cmd = DeclareLaunchArgument(
         'scene_name',
-        default_value="ERROR_SCENE_NAME",
+        default_value="rmuc2024",
         description='Name of the scene to load'
     )
     declare_maps_dir_cmd = DeclareLaunchArgument(
         'maps_dir',
-        default_value="ERROR_MAPS_DIR",
+        default_value=os.path.join(urdf_package_path,'map'),
         description='Directory containing the scene\'s map yaml file and pcd'
     )
-    
     
     bringup_dir = get_package_share_directory('nav_bringup')
     param_file = os.path.join(bringup_dir, 'config', 'nav2_params.yaml')
@@ -164,7 +150,7 @@ def generate_launch_description():
             "prior_pcd_file": prior_pcd_file,
             "use_sim_time": use_sim_time,
             "default_enable": PythonExpression([
-                LaunchConfiguration('use_relocalization'),
+                use_relocalization,
                 ' and not ',
                 LaunchConfiguration('use_online_map')
             ])

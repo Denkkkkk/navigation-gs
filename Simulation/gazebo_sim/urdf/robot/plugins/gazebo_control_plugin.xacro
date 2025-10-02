@@ -43,6 +43,7 @@
                 <!-- 里程计和机器人基坐标系（可选，默认已匹配你的配置） -->
                 <odometry_frame>odom</odometry_frame>
                 <robot_base_frame>base_footprint</robot_base_frame>
+                <odometry_topic>odom</odometry_topic>
                 <!-- 发布频率（单位Hz） -->
                 <publish_rate>100</publish_rate>
                 <!-- 控制更新频率（可选，默认20Hz） -->
