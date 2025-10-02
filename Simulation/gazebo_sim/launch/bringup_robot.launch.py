@@ -36,6 +36,15 @@ def generate_launch_description():
     """
         下面开始节点或者其他launch文件的声明
     """
+    ## 启动gazebo
+    action_launch_nav_sim=launch.actions.IncludeLaunchDescription(
+        launch.launch_description_sources.PythonLaunchDescriptionSource(
+            [get_package_share_directory('gazebo_ros'),'/launch','/nav_sim.launch.py']
+        ),
+        launch_arguments=[
+            ('use_sim_time','true')
+            ]
+    )
     
     action_robot_state_publisher=Node(
         package='robot_state_publisher',
@@ -55,6 +64,7 @@ def generate_launch_description():
             ('use_sim_time','true')
             ]
     )
+    
 
     action_spawn_entity=Node(
         package='gazebo_ros',
@@ -115,6 +125,7 @@ def generate_launch_description():
     ld.add_action(action_rviz_node)
     ld.add_action(action_robot_simulator)
     ld.add_action(action_map_to_odom)
+    # ld.add_action(action_launch_nav_sim)
     
     
     return ld

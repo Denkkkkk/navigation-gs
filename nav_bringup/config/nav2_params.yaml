@@ -95,6 +95,7 @@ local_costmap:
         cost_scaling_factor: 0.1
       always_send_full_costmap: True
 
+
 bt_navigator:
   ros__parameters:
     use_sim_time: false

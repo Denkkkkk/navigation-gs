@@ -8,7 +8,7 @@ Panels:
         - /Status1
         - /RobotModel1
         - /TF1
-        - /PointCloud22
+        - /Map1
       Splitter Ratio: 0.43073591589927673
     Tree Height: 660
   - Class: rviz_common/Selection
@@ -153,22 +153,23 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
+        base_footprint:
+          vehicle:
+            back_left_wheel:
+              {}
+            back_right_wheel:
+              {}
+            front_left_wheel:
+              {}
+            front_right_wheel:
+              {}
+            lidar_holder:
+              velodyne_base_link:
+                velodyne:
+                  {}
         map:
           odom:
-            base_footprint:
-              vehicle:
-                back_left_wheel:
-                  {}
-                back_right_wheel:
-                  {}
-                front_left_wheel:
-                  {}
-                front_right_wheel:
-                  {}
-                lidar_holder:
-                  velodyne_base_link:
-                    velodyne:
-                      {}
+            {}
       Update Interval: 0
       Value: true
     - Class: rviz_default_plugins/Image
@@ -253,6 +254,27 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map_updates
+      Use Timestamp: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -299,25 +321,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 22.017393112182617
+      Distance: 20.450403213500977
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.19361963868141174
-        Y: 1.1339951753616333
-        Z: 1.021270513534546
+        X: 0.9414939880371094
+        Y: 1.2491474151611328
+        Z: 1.1351505517959595
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5697963237762451
+      Pitch: 1.4697962999343872
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.9535768032073975
+      Yaw: 3.0685768127441406
     Saved: ~
 Window Geometry:
   Displays:

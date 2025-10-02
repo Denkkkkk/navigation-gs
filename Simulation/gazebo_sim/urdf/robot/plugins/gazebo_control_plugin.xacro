@@ -45,9 +45,9 @@
                 <robot_base_frame>base_footprint</robot_base_frame>
                 <odometry_topic>odom</odometry_topic>
                 <!-- 发布频率（单位Hz） -->
-                <publish_rate>100</publish_rate>
+                <publish_rate>50</publish_rate>
                 <!-- 控制更新频率（可选，默认20Hz） -->
-                <update_rate>100</update_rate>
+                <update_rate>50</update_rate>
                 <!-- 是否发布里程计和TF（可选，默认true） -->
                 <publish_odom>true</publish_odom>
                 <publish_odom_tf>true</publish_odom_tf>
