@@ -66,7 +66,7 @@ def generate_launch_description():
     action_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        namespace=hub_id,
+        # namespace=hub_id,
         parameters=[{
             'robot_description': robot_description_value,
             'use_sim_time': True
@@ -89,7 +89,7 @@ def generate_launch_description():
     action_spawn_entity = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        namespace=hub_id,
+        # namespace=hub_id,
         arguments=['-topic', 'robot_description', '-entity', 'robot'],
         parameters=[{'use_sim_time': True}]
     )

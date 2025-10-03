@@ -2,8 +2,8 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="VLP-16">
   <xacro:property name="M_PI" value="3.1415926535897931" />
   <xacro:macro name="VLP-16"
-    params="*origin namespace_prefix:='' parent:=base_link name:=velodyne organize_cloud:=false topic:=/velodyne_points organize_cloud:=false hz:=10 lasers:=16 samples:=1875 collision_range:=0.5 min_range:=0.6 max_range:=30.0 noise:=0.008 min_angle:=-${M_PI} max_angle:=${M_PI} gpu:=false vmin_angle:=-${M_PI} vmax_angle:=${M_PI}">
-
+    params="*origin hub_id:='' parent:=base_link name:=velodyne topic:=velodyne_points organize_cloud:=false hz:=10 lasers:=16 samples:=1875 collision_range:=0.5 min_range:=0.6 max_range:=30.0 noise:=0.008 min_angle:=-${M_PI} max_angle:=${M_PI} gpu:=false vmin_angle:=-${M_PI} vmax_angle:=${M_PI}">
+    <xacro:property name="namespace_prefix" value="${hub_id + '/' if hub_id else ''}" />
     <joint name="${namespace_prefix}${name}_base_mount_joint" type="fixed">
       <xacro:insert_block name="origin" />  <!--插入参数宏，对应第一个参数*origin-->
       <parent link="${namespace_prefix}${parent}" />
@@ -90,8 +90,8 @@
             </noise>
           </ray>
           <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_gpu_laser.so">
-            <topicName>/${namespace_prefix}${topic}</topicName>
-            <frameName>/${namespace_prefix}${name}</frameName>
+            <topicName>${namespace_prefix}${topic}</topicName>
+            <frameName>${namespace_prefix}${name}</frameName>
             <organize_cloud>${organize_cloud}</organize_cloud>
             <min_range>${min_range}</min_range>
             <max_range>${max_range}</max_range>
@@ -131,9 +131,8 @@
             </noise>
           </ray>
           <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_laser.so">
-            <topicName>/${namespace_prefix}${topic}</topicName>
-            <frameName>/${namespace_prefix}${name}</frameName>
-            <organize_cloud>${organize_cloud}</organize_cloud>
+            <topicName>${namespace_prefix}${topic}</topicName>
+            <frameName>${namespace_prefix}${name}</frameName>
             <min_range>${min_range}</min_range>
             <max_range>${max_range}</max_range>
             <gaussianNoise>${noise}</gaussianNoise>
