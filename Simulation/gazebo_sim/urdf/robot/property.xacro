@@ -1,6 +1,6 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot">
     <xacro:property name="hub_id" value="$(arg hub_id)" />
-    <xacro:property name="namespace_prefix" value="${hub_id + '/' if hub_id else ''}" />
+    <xacro:property name="namespace_prefix" value="${hub_id + '/'}" />
     <xacro:property name="ns" value="$(arg ns)/" />
     <!-- 惯性矩阵 -->
     <!-- sphere球体 -->

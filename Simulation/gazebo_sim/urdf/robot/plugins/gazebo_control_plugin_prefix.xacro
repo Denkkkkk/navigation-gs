@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:macro name="gazebo_control_plugin" params="hub_id:=''">
-        <xacro:property name="namespace_prefix" value="${hub_id + '/' if hub_id else ''}" />
+    <xacro:macro name="gazebo_control_plugin" params="namespace_prefix:=''">
         <!-- mu1静,mu2动，kp 刚度系数 kd 阻尼系数 -->
         <gazebo reference="${namespace_prefix}front_left_wheel">
             <mu1>0.0</mu1>

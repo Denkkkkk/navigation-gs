@@ -5,54 +5,80 @@ import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, SetEnvironmentVariable
 from launch_ros.actions import Node
-from launch.substitutions import EnvironmentVariable
 import launch_ros.parameter_descriptions
+from launch.substitutions import EnvironmentVariable
+from launch.substitutions import Command
+from launch.substitutions import FindExecutable
+from launch.substitutions import LaunchConfiguration
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
-    # 获取 HUB_ID 环境变量，如果没有则使用空字符串
+    """@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        参数声明
+    """
     hub_id = os.environ.get('HUB_ID', '')
-    
-    declare_use_sim_time_cmd = DeclareLaunchArgument(
+    # 声明所有参数
+    declared_arguments = []
+    declared_arguments.append(
+        DeclareLaunchArgument(
         "use_sim_time",
         default_value="True",
         description="Whether or not to use the simulation time instead of the system time."
+        )
     )
     
-    # 声明 HUB_ID 参数，可以在命令行覆盖
-    declare_hub_id_cmd = DeclareLaunchArgument(
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'prefix',
+            default_value=hub_id,
+            description='Prefix of the joint and link names'
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
         'hub_id',
         default_value=hub_id,
         description='HUB_ID for namespace isolation'
+        )
     )
     
+    prefix = LaunchConfiguration('prefix')
+    use_sim= LaunchConfiguration('use_sim_time')
+
+    """@@@
+        路径获取
+    """
     # 获取功能包的share路径
     urdf_package_path = get_package_share_directory('gazebo_sim')
-    default_xacro_path = os.path.join(urdf_package_path, 'urdf', 'robot/robot.urdf.xacro')
     default_rviz_config_path = os.path.join(urdf_package_path, 'config', 'display_robot_model.rviz')
     default_gazebo_world_path = os.path.join(urdf_package_path, 'world', 'RMUC2024.world')
-
-    # 声明一个urdf目录的参数,方便修改
-    action_declare_arg_mode_path = launch.actions.DeclareLaunchArgument(
-        name='model', default_value=str(default_xacro_path), description='加载的模型文件路径'
+    
+    # get the robot description from the xacro file
+    urdf_file = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name='xacro')]),
+            ' ',
+            PathJoinSubstitution(
+                [
+                    FindPackageShare('gazebo_sim'),
+                    'urdf',
+                    'robot/robot.urdf.xacro'
+                ]
+            ),
+            ' ',
+            'prefix:=',
+            prefix,
+            ' ',
+            'use_sim:=',
+            use_sim,
+        ]
     )
     
-    # 通过文件路径，获取内容，并转换成参数值对象，以供传入 robot_state_publisher
-    substitutions_command_result = launch.substitutions.Command([
-        'xacro ',
-        launch.substitutions.LaunchConfiguration('model'),
-        ' hub_id:=',
-        launch.substitutions.LaunchConfiguration('hub_id')  # 传递 hub_id 参数
-    ])
-    
-    robot_description_value = launch_ros.parameter_descriptions.ParameterValue(
-        substitutions_command_result, value_type=str
-    )
-    
+    """@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        launch文件调用
     """
-    下面开始节点或者其他launch文件的声明
-    """
-    
-    ## 启动gazebo
+    # 启动实车的相关导航节点
     action_launch_nav_sim = launch.actions.IncludeLaunchDescription(
         launch.launch_description_sources.PythonLaunchDescriptionSource(
             [get_package_share_directory('gazebo_ros'), '/launch', '/nav_sim.launch.py']
@@ -61,19 +87,7 @@ def generate_launch_description():
             ('use_sim_time', 'true')
         ]
     )
-    
-    # 为 robot_state_publisher 添加命名空间
-    action_robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        # namespace=hub_id,
-        parameters=[{
-            'robot_description': robot_description_value,
-            'use_sim_time': True
-            # 'frame_prefix': f'{hub_id}/' if hub_id else ''  # 为所有坐标系添加前缀
-        }],
-    )
-
+    # 启动 gazebo-world
     action_launch_gazebo = launch.actions.IncludeLaunchDescription(
         launch.launch_description_sources.PythonLaunchDescriptionSource(
             [get_package_share_directory('gazebo_ros'), '/launch', '/gazebo.launch.py']
@@ -84,28 +98,49 @@ def generate_launch_description():
             ('use_sim_time', 'true')
         ]
     )
-    
-    # 为 spawn_entity 添加命名空间
-    action_spawn_entity = Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
-        # namespace=hub_id,
-        arguments=['-topic', 'robot_description', '-entity', 'robot'],
-        parameters=[{'use_sim_time': True}]
-    )
 
-    # 为 joint_state_publisher 添加命名空间
-    action_joint_state_publisher = Node(
-        package='joint_state_publisher',
-        executable='joint_state_publisher',
-        namespace=hub_id,
+    """@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        node调用
+    """
+    robot_state_pub_node = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        # namespace=hub_id,
+        parameters=[{'robot_description': urdf_file, 'use_sim_time': use_sim}],
+        output='screen'
+    )
+    
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        # namespace=hub_id,
+        # arguments=['joint_state_broadcaster', '--controller-manager', '/controller_manager'],
         parameters=[{
             'use_sim_time': True
             # 'frame_prefix': f'{hub_id}/' if hub_id else ''  # 确保这里正确设置
-            }]
+            }],
+        output='screen',
     )
+    
+    # 为 spawn_entity 
+    action_spawn_entity = Node(
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        arguments=[
+            '-topic', 'robot_description',
+            '-entity', 'robot',
+            '-x', '0.0',
+            '-y', '0.0',
+            '-z', '0.0',
+            '-R', '0.0',
+            '-P', '0.0',
+            '-Y', '0.0'
+            ],
+        output='screen',
+        parameters=[{'use_sim_time': True}]
+    ),
 
-    # RViz2 通常不需要命名空间，但可以设置remap规则
+    # RViz2 
     action_rviz_node = Node(
         package='rviz2',
         executable='rviz2',
@@ -113,7 +148,7 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}],
     )
     
-    # 为 robot_simulator 节点添加命名空间
+    # robot_simulator 节点
     action_robot_simulator = Node(
         package='gazebo_sim',
         executable='gazebo_sim',
@@ -151,16 +186,17 @@ def generate_launch_description():
     ld = LaunchDescription()
     
     # 添加所有动作
-    ld.add_action(declare_use_sim_time_cmd)
-    ld.add_action(declare_hub_id_cmd)  # 添加 HUB_ID 声明
-    ld.add_action(action_declare_arg_mode_path)
-    ld.add_action(action_robot_state_publisher)
-    ld.add_action(action_joint_state_publisher)
-    ld.add_action(action_launch_gazebo)
-    ld.add_action(action_spawn_entity)
-    ld.add_action(action_rviz_node)
-    # ld.add_action(action_robot_simulator)
-    # ld.add_action(action_map_to_odom)
-    # ld.add_action(action_launch_nav_sim)
     
-    return ld
+    nodes = [
+        action_launch_gazebo,
+        action_launch_nav_sim,
+        robot_state_pub_node,
+        joint_state_broadcaster_spawner,
+        action_spawn_entity,
+        action_rviz_node,
+        action_robot_simulator,
+        action_map_to_odom
+    ]
+
+    
+    return LaunchDescription(declared_arguments + nodes)
