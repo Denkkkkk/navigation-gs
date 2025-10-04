@@ -38,9 +38,9 @@ public:
     RobotSimulator() : Node("robotSimulator")
     {
         // 参数声明
-        this->declare_parameter<std::string>("robotFrame", "base_footprint");
-        robotFrame = this->get_parameter("robotFrame").as_string();
-
+        this->declare_parameter<std::string>("hub_id", "");
+        hub_id = this->get_parameter("hub_id").as_string();
+        robotFrame = "denk/base_footprint";
         // TF2 相关初始化
         tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
         tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -54,12 +54,12 @@ public:
             "velodyne_points2", 5,
             std::bind(&RobotSimulator::scan2Handler, this, std::placeholders::_1));
             
-        pubVehicleOdom = this->create_publisher<nav_msgs::msg::Odometry>("/odometry", 5);
-        pubScan = this->create_publisher<sensor_msgs::msg::PointCloud2>("/registered_scan", 5);
+        pubVehicleOdom = this->create_publisher<nav_msgs::msg::Odometry>("odometry", 5);
+        pubScan = this->create_publisher<sensor_msgs::msg::PointCloud2>("registered_scan", 5);
 
         // 初始化消息头
-        registered_points.header.frame_id = "map";
-        odomData.header.frame_id = "map";
+        registered_points.header.frame_id = "denk/map";
+        odomData.header.frame_id = "denk/map";
         odomData.child_frame_id = robotFrame;
 
         // 定时器，替代原来的循环
@@ -82,6 +82,7 @@ private:
 
     // 数据存储
     nav_msgs::msg::Odometry odomData;
+    std::string hub_id;
     std::string robotFrame;
     sensor_msgs::msg::PointCloud2 registered_points;
     sensor_msgs::msg::PointCloud2 velodyne_points1;
@@ -108,14 +109,14 @@ private:
 
         pcl::toROSMsg(pcl_registered, registered_points);
         registered_points.header.stamp = this->now();
-        registered_points.header.frame_id = "map";
+        registered_points.header.frame_id = "denk/map";
         pubScan->publish(registered_points);
 
         // 获取 TF 变换并发布里程计
         try
         {
             geometry_msgs::msg::TransformStamped transform;
-            transform = tf_buffer_->lookupTransform("map", robotFrame, tf2::TimePointZero);
+            transform = tf_buffer_->lookupTransform("denk/map", robotFrame, tf2::TimePointZero);
 
             // 从四元数获取欧拉角
             tf2::Quaternion quat;
@@ -144,7 +145,7 @@ private:
         {
             // 转换点云坐标系
             geometry_msgs::msg::TransformStamped transform;
-            transform = tf_buffer_->lookupTransform("map", scanIn->header.frame_id, tf2::TimePointZero);
+            transform = tf_buffer_->lookupTransform("denk/map", scanIn->header.frame_id, tf2::TimePointZero);
             tf2::doTransform(*scanIn, velodyne_points1, transform);
         }
         catch (tf2::TransformException &ex)
@@ -159,7 +160,7 @@ private:
         {
             // 转换点云坐标系
             geometry_msgs::msg::TransformStamped transform;
-            transform = tf_buffer_->lookupTransform("map", scanIn->header.frame_id, scanIn->header.stamp);
+            transform = tf_buffer_->lookupTransform("denk/map", scanIn->header.frame_id, scanIn->header.stamp);
             
             tf2::doTransform(*scanIn, velodyne_points2, transform);
         }

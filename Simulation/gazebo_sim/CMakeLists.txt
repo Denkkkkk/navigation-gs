@@ -80,7 +80,7 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch urdf config world meshes map
+install(DIRECTORY launch urdf config world meshes map 
   DESTINATION share/${PROJECT_NAME}
 )
 

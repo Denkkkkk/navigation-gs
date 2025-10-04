@@ -11,10 +11,12 @@ MapToOdom::MapToOdom() : Node("map_to_odom")
     this->declare_parameter<double>("vehicleX", 0.0);
     this->declare_parameter<double>("vehicleY", 0.0);
     this->declare_parameter<double>("vehicleYaw", 0.0);
+    this->declare_parameter<std::string>("hub_id", "");
     
     defaultX = this->get_parameter("vehicleX").as_double();
     defaultY = this->get_parameter("vehicleY").as_double();
     defaultYaw = this->get_parameter("vehicleYaw").as_double();
+    // hub_id = this->get_parameter("hub_id").as_string();
 
     // TF2 初始化
     tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
@@ -26,7 +28,7 @@ MapToOdom::MapToOdom() : Node("map_to_odom")
     pubOdomToMapPose = this->create_publisher<geometry_msgs::msg::PoseStamped>("/odomToMapPose", 5);
     pubvehicleToOdom = this->create_publisher<geometry_msgs::msg::PoseStamped>("/vehicleToOdom", 5);
     pubRelocal = this->create_publisher<geometry_msgs::msg::PoseStamped>("/need_reloc", 1);
-    pubGoalPoint = this->create_publisher<geometry_msgs::msg::PointStamped>("/move_base_simple/goal", 5);
+    // pubGoalPoint = this->create_publisher<geometry_msgs::msg::PointStamped>("/move_base_simple/goal", 5);
 
     // 订阅者
     subReLocal = this->create_subscription<geometry_msgs::msg::PoseStamped>(
@@ -137,7 +139,7 @@ void MapToOdom::reLocalizationCallBack(const geometry_msgs::msg::PoseStamped::Sh
 
         // 发布想要的vehicle到map的坐标变换
         wantVehicleToMap.header.stamp = this->now();
-        wantVehicleToMap.header.frame_id = "map";
+        wantVehicleToMap.header.frame_id = "denk/map";
         wantVehicleToMap.pose = vTm_msg->pose;
         pubVehicleToMapPose->publish(wantVehicleToMap);
 
@@ -145,7 +147,7 @@ void MapToOdom::reLocalizationCallBack(const geometry_msgs::msg::PoseStamped::Sh
         tf2::Quaternion quat1;
         quat1.setRPY(roll_vTo, pitch_vTo, yaw_vTo);
         vehicleToOdom.header.stamp = this->now();
-        vehicleToOdom.header.frame_id = "map";
+        vehicleToOdom.header.frame_id = "denk/map";
         vehicleToOdom.pose.position.x = transform.transform.translation.x;
         vehicleToOdom.pose.position.y = transform.transform.translation.y;
         vehicleToOdom.pose.position.z = transform.transform.translation.z;
@@ -154,18 +156,18 @@ void MapToOdom::reLocalizationCallBack(const geometry_msgs::msg::PoseStamped::Sh
 
         // 发布计算得到的odom到map的坐标变换
         countOdomToMap.header.stamp = this->now();
-        countOdomToMap.header.frame_id = "map";
+        countOdomToMap.header.frame_id = "denk/map";
         countOdomToMap.pose = map_to_odom_trans.pose;
         pubOdomToMapPose->publish(countOdomToMap);
 
         // 发布重定位后的当前目标点
         auto goal_point = geometry_msgs::msg::PointStamped();
-        goal_point.header.frame_id = "map";
+        goal_point.header.frame_id = "denk/map";
         goal_point.header.stamp = this->now();
         goal_point.point.x = vTm_msg->pose.position.x;
         goal_point.point.y = vTm_msg->pose.position.y;
         goal_point.point.z = vTm_msg->pose.position.z;
-        pubGoalPoint->publish(goal_point);
+        // pubGoalPoint->publish(goal_point);
 
         RCLCPP_INFO(this->get_logger(), "------------------------------------------------------------------");
         RCLCPP_INFO(this->get_logger(), "Relocalization completed successfully");
@@ -193,8 +195,8 @@ int main(int argc, char **argv)
         // 发布 TF 变换
         geometry_msgs::msg::TransformStamped odomTrans;
         odomTrans.header.stamp = node->now();
-        odomTrans.header.frame_id = "map";
-        odomTrans.child_frame_id = "odom";
+        odomTrans.header.frame_id = "denk/map";
+        odomTrans.child_frame_id = "denk/odom";
         
         odomTrans.transform.translation.x = node->map_to_odom_trans.pose.position.x;
         odomTrans.transform.translation.y = node->map_to_odom_trans.pose.position.y;

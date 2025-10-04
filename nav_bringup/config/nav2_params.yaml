@@ -178,7 +178,9 @@ bt_navigator:
 
 controller_server:
   ros__parameters:
+    odom_topic: odometry
     controller_frequency: 30.0
+    controller_plugins: ["FollowPath"]
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
       time_steps: 56

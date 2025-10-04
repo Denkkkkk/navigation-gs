@@ -1,64 +1,64 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="VLP-16">
-  <xacro:property name="M_PI" value="3.1415926535897931"/>
-  <xacro:macro name="VLP-16" params="*origin parent:=base_link name:=velodyne topic:=/velodyne_points hz:=10 lasers:=16 samples:=1875 collision_range:=0.3 min_range:=0.9 max_range:=130.0 noise:=0.008 min_angle:=-${M_PI} max_angle:=${M_PI} gpu:=false">
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+  <xacro:macro name="VLP-16"
+    params="*origin hub_id:='' parent:=base_link name:=velodyne topic:=/velodyne_points hz:=10 lasers:=16 samples:=1875 collision_range:=0.5 min_range:=0.6 max_range:=30.0 noise:=0.008 min_angle:=-${M_PI} max_angle:=${M_PI} gpu:=false vmin_angle:=-${M_PI} vmax_angle:=${M_PI}">
+    <xacro:property name="namespace_prefix" value="${hub_id + '/' if hub_id else ''}" />
 
-    <joint name="${name}_base_mount_joint" type="fixed">
-      <xacro:insert_block name="origin"/>
-      <parent link="${parent}"/>
-      <child link="${name}_base_link"/>
+    <joint name="${namespace_prefix}${name}_base_mount_joint" type="fixed">
+      <xacro:insert_block name="origin" />  <!--插入参数宏，对应第一个参数*origin-->
+      <parent link="${namespace_prefix}${parent}" />
+      <child link="${namespace_prefix}${name}_base_link" />
     </joint>
 
-    <link name="${name}_base_link">
+    <link name="${namespace_prefix}${name}_base_link">
       <inertial>
-        <mass value="0.83"/>
-        <origin xyz="0 0 0.03585"/>
-        <inertia ixx="${(0.83 * (3.0*0.0516*0.0516 + 0.0717*0.0717)) / 12.0}" ixy="0" ixz="0" iyy="${(0.83 * (3.0*0.0516*0.0516 + 0.0717*0.0717)) / 12.0}" iyz="0" izz="${0.5 * 0.83 * (0.0516*0.0516)}"/>
+        <mass value="0.83" />
+        <origin xyz="0 0 0.03585" />
+        <inertia ixx="${(0.83 * (3.0*0.0516*0.0516 + 0.0717*0.0717)) / 12.0}" ixy="0" ixz="0"
+          iyy="${(0.83 * (3.0*0.0516*0.0516 + 0.0717*0.0717)) / 12.0}" iyz="0"
+          izz="${0.5 * 0.83 * (0.0516*0.0516)}" />
       </inertial>
       <visual>
         <geometry>
-          <!-- <mesh filename="package://velodyne_description/meshes/VLP16_base_1.dae"/> -->
           <mesh filename="file://$(find velodyne_description)/meshes/VLP16_base_1.dae"/>
         </geometry>
       </visual>
       <visual>
         <geometry>
-          <!-- <mesh filename="package://velodyne_description/meshes/VLP16_base_2.dae"/> -->
           <mesh filename="file://$(find velodyne_description)/meshes/VLP16_base_2.dae"/>
         </geometry>
       </visual>
       <collision>
-        <origin rpy="0 0 0" xyz="0 0 0.03585"/>
+        <origin rpy="0 0 0" xyz="0 0 0.03585" />
         <geometry>
-          <cylinder radius="0.0516" length="0.0717"/>
+          <cylinder radius="0.0516" length="0.0717" />
         </geometry>
       </collision>
     </link>
 
-    <joint name="${name}_base_scan_joint" type="fixed">
-      <origin xyz="0 0 0.0377" rpy="0 0 0"/>
-      <parent link="${name}_base_link"/>
-      <child link="${name}"/>
+    <joint name="${namespace_prefix}${name}_base_scan_joint" type="fixed">
+      <origin xyz="0 0 0.0377" rpy="0 0 0" />
+      <parent link="${namespace_prefix}${name}_base_link" />
+      <child link="${namespace_prefix}${name}" />
     </joint>
 
-    <link name="${name}">
+    <link name="${namespace_prefix}${name}">
       <inertial>
-        <mass value="0.01"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+        <mass value="0.01" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7" />
       </inertial>
       <visual>
-        <origin xyz="0 0 -0.0377"/>
+        <origin xyz="0 0 -0.0377" />
         <geometry>
-          <!-- <mesh filename="package://velodyne_description/meshes/VLP16_scan.dae"/> -->
-          <!-- <mesh $(find velodyne_description)/meshes/VLP16_scan.dae"/> -->
-          <mesh filename="file://$(find velodyne_description)/meshes/VLP16_scan.dae"/>
+          <mesh filename="package://velodyne_description/meshes/VLP16_scan.dae" />
         </geometry>
       </visual>
     </link>
 
     <!-- Gazebo requires the velodyne_gazebo_plugins package -->
-    <gazebo reference="${name}">
+    <gazebo reference="${namespace_prefix}${name}">
       <xacro:if value="${gpu}">
         <sensor type="gpu_ray" name="${name}-VLP16">
           <pose>0 0 0 0 0 0</pose>
@@ -75,9 +75,8 @@
               <vertical>
                 <samples>${lasers}</samples>
                 <resolution>1</resolution>
-                <min_angle>-${15.0*M_PI/180.0}</min_angle>
-                <max_angle>
-                  ${15.0*M_PI/180.0}</max_angle>
+                <min_angle>${vmin_angle}</min_angle>
+                <max_angle>${vmax_angle}</max_angle>
               </vertical>
             </scan>
             <range>
@@ -91,9 +90,9 @@
               <stddev>0.0</stddev>
             </noise>
           </ray>
-          <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_laser.so">
-            <topicName>${topic}</topicName>
-            <frameName>${name}</frameName>
+          <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_gpu_laser.so">
+            <topicName>${namespace_prefix}${topic}</topicName>
+            <frameName>${namespace_prefix}${name}</frameName>
             <min_range>${min_range}</min_range>
             <max_range>${max_range}</max_range>
             <gaussianNoise>${noise}</gaussianNoise>
@@ -116,9 +115,8 @@
               <vertical>
                 <samples>${lasers}</samples>
                 <resolution>1</resolution>
-                <min_angle>-${15.0*M_PI/180.0}</min_angle>
-                <max_angle>
-                  ${15.0*M_PI/180.0}</max_angle>
+                <min_angle>${vmin_angle}</min_angle>
+                <max_angle>${vmax_angle}</max_angle>
               </vertical>
             </scan>
             <range>
@@ -133,8 +131,8 @@
             </noise>
           </ray>
           <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_laser.so">
-            <topicName>${topic}</topicName>
-            <frameName>${name}</frameName>
+            <topicName>${namespace_prefix}${topic}</topicName>
+            <frameName>${namespace_prefix}${name}</frameName>
             <min_range>${min_range}</min_range>
             <max_range>${max_range}</max_range>
             <gaussianNoise>${noise}</gaussianNoise>

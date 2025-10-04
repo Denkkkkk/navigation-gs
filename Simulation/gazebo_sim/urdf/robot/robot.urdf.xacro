@@ -19,6 +19,11 @@
         min_angle="-3.14159" max_angle="3.14159" vmin_angle="${-7/180*PI}" vmax_angle="${52/180*PI}">
         <origin xyz="0.0 0.0 ${holder_length/2}" rpy="0 0 0" />
     </xacro:VLP-16> -->
+    <xacro:VLP-16 parent="denk/lidar_holder"  name="velodyne" topic="denk/velodyne_points" hz="10"
+        min_range="0.55" samples="350" collision_range="0.56" gpu="false"
+        min_angle="-3.14159" max_angle="3.14159" >
+        <origin xyz="0.0 0.0 ${holder_length/2}" rpy="0 0 0" />
+    </xacro:VLP-16>
     <!-- <xacro:VLP-16 parent="vehicle" name="velodyne2" topic="/velodyne_points2" hz="10"
         min_range="0.55" samples="350" collision_range="0.56" gpu="false"
         min_angle="-3.14159" max_angle="0" vmin_angle="${-7/180*PI}" vmax_angle="${52/180*PI}">

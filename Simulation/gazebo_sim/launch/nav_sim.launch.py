@@ -62,7 +62,6 @@ def generate_launch_description():
     # make map paths
     # prior_pcd_file = PathJoinSubstitution([maps_dir, scene_name, PythonExpression(["'", scene_name, "' + '.pcd'"])])
     map_yaml_file = os.path.join(urdf_package_path,'map','rmuc2024.yaml')
-    print("-----------------------------------map_yaml_file: ", map_yaml_file)
 
     map_server_container_node = Node(
         name="nav2_map_server_container",
