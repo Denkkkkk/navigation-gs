@@ -46,7 +46,7 @@ def generate_launch_description():
     """
     # 获取功能包的share路径
     this_package_path = get_package_share_directory('gazebo_sim')
-    default_rviz_config_path = os.path.join(this_package_path, 'config', 'display_robot_model.rviz')
+    default_rviz_config_path = os.path.join(this_package_path, 'config', 'nav.rviz')
     default_gazebo_world_path = os.path.join(this_package_path, 'world', 'RMUC2024.world')
     
     # get the robot description from the xacro file
@@ -145,6 +145,7 @@ def generate_launch_description():
         executable='rviz2',
         arguments=['-d', default_rviz_config_path],
         parameters=[{'use_sim_time': True}],
+        
     )
     
     # robot_simulator 节点

@@ -20,6 +20,7 @@ find_package(gazebo_ros REQUIRED)
 find_package(PCL REQUIRED)
 find_package(pcl_msgs REQUIRED)
 find_package(pcl_conversions REQUIRED)
+find_package(pcl_ros REQUIRED)
 
 add_executable(gazebo_sim src/gazebo_sim.cpp)
 ament_target_dependencies(gazebo_sim
@@ -35,6 +36,7 @@ ament_target_dependencies(gazebo_sim
   gazebo_ros
   pcl_msgs
   pcl_conversions
+  pcl_ros
 )
 target_link_libraries(gazebo_sim
   ${PCL_LIBRARIES}
