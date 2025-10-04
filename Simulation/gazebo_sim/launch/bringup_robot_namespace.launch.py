@@ -93,11 +93,13 @@ def generate_launch_description():
             ('use_sim_time', 'true')
         ]
     )
-    terrain_launch = launch.actions.IncludeLaunchDescription(
+    bringup_basic_launch = launch.actions.IncludeLaunchDescription(
         launch.launch_description_sources.PythonLaunchDescriptionSource(
-            os.path.join(this_package_path, "launch", "terrain.launch.py")
+            [this_package_path, '/launch', '/bringup_basic.launch.py']
         ),
-        launch_arguments={"use_sim_time": 'true'}.items()
+        launch_arguments=[
+            ('use_sim_time', 'true')
+        ]
     )
 
     """@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -145,7 +147,9 @@ def generate_launch_description():
         executable='rviz2',
         arguments=['-d', default_rviz_config_path],
         parameters=[{'use_sim_time': True}],
-        
+        remappings=[
+            ('/goal_pose', '/denk/goal_pose'),
+        ]
     )
     
     # robot_simulator 节点
@@ -190,7 +194,7 @@ def generate_launch_description():
     ld.add_action(prefix_declare)
     ld.add_action(hub_id_declare)
     # 添加所有动作
-    ld.add_action(terrain_launch)
+    ld.add_action(bringup_basic_launch)
     # ld.add_action(nav_sim_launch)
     ld.add_action(gazebo_launch)
     ld.add_action(robot_state_pub_node)
