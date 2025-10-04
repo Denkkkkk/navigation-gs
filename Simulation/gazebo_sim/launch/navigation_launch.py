@@ -195,7 +195,7 @@ def generate_launch_description():
                 name="controller_server",
                 namespace=hub_id,
                 remappings=[
-                    ("cmd_vel", "cmd_vel_controller")
+                    ("cmd_vel", "cmd_vel")
                 ],
                 parameters=[
                     configured_params, 
@@ -215,7 +215,7 @@ def generate_launch_description():
                 name="velocity_smoother",
                 namespace=hub_id,
                 remappings=[
-                    ("cmd_vel", "cmd_vel_controller"),  # remap input
+                    ("cmd_vel", "cmd_vel"),  # remap input
                 ],
                 parameters=[
                     configured_params, 

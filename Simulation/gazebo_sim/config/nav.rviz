@@ -47,7 +47,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: terrain_map
+    SyncSource: LaserScan
   - Class: nav2_rviz_plugins/Navigation 2
     Name: Navigation 2
 Visualization Manager:
@@ -98,7 +98,7 @@ Visualization Manager:
           Value: false
         velodyne_base_link:
           Value: false
-      Marker Scale: 1
+      Marker Scale: 3
       Name: TF
       Show Arrows: true
       Show Axes: true
@@ -479,7 +479,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 15.619586944580078
+      Distance: 22.858362197875977
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -494,10 +494,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5647963285446167
+      Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.116708755493164
+      Yaw: 3.2117087841033936
     Saved: ~
 Window Geometry:
   Displays:
