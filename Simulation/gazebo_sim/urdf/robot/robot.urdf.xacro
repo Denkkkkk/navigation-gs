@@ -31,6 +31,6 @@
     </xacro:VLP-16> -->
 
     <xacro:include filename="$(find gazebo_sim)/urdf/robot/plugins/gazebo_control_plugin_prefix.xacro" />
-    <xacro:gazebo_control_plugin namespace_prefix="${namespace_prefix}" />
+    <xacro:gazebo_control_plugin/>
 
 </robot>

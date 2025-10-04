@@ -23,7 +23,7 @@ def generate_launch_description():
     ################ Declare arguments for CLI override ################
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         "use_sim_time",
-        default_value="False",
+        default_value="True",
         description="Whether or not to use the simulation time instead of the system time."
     )
     declare_use_relocalization_cmd = DeclareLaunchArgument(

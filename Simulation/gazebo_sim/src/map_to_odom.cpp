@@ -187,7 +187,7 @@ int main(int argc, char **argv)
     auto node = std::make_shared<MapToOdom>();
     
     // 使用定时器替代原来的循环
-    rclcpp::Rate rate(100);
+    rclcpp::Rate rate(10);
     
     while (rclcpp::ok()) {
         rclcpp::spin_some(node);
