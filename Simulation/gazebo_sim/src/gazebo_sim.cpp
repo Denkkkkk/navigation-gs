@@ -96,7 +96,15 @@ private:
         pcl::PointCloud<pcl::PointXYZI> pcl_registered;
         
         pcl::fromROSMsg(velodyne_points1, pcl_points1);
-        pcl_registered = pcl_points1;
+        // 先剔除NaN点
+        pcl::PointCloud<pcl::PointXYZI> pcl_points1_filtered;
+        std::vector<int> indices1, indices2;
+        for (const auto& point : pcl_points1) {
+            if (std::isfinite(point.x) && std::isfinite(point.y) && std::isfinite(point.z) && std::isfinite(point.intensity)) {
+                pcl_points1_filtered.push_back(point);
+            }
+        }
+        pcl_registered = pcl_points1_filtered;
         // pcl::fromROSMsg(velodyne_points2, pcl_points2);
         // for (long unsigned int i = 0; i < pcl_points1.points.size(); i++)
         // {

@@ -71,6 +71,6 @@ def generate_launch_description():
     ld.add_action(declare_hub_id_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(terrain_launch)
-    ld.add_action(transform_launch)
+    # ld.add_action(transform_launch)
 
     return ld

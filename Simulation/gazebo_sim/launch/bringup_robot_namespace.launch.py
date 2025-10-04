@@ -195,7 +195,7 @@ def generate_launch_description():
     ld.add_action(hub_id_declare)
     # 添加所有动作
     ld.add_action(bringup_basic_launch)
-    # ld.add_action(nav_sim_launch)
+    ld.add_action(nav_sim_launch)
     ld.add_action(gazebo_launch)
     ld.add_action(robot_state_pub_node)
     ld.add_action(joint_state_pub_node)
