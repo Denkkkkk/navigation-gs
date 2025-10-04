@@ -88,7 +88,7 @@ def generate_launch_description():
     
     hub_id = os.environ.get('HUB_ID', '')
     bringup_dir = get_package_share_directory('nav_bringup')
-    param_file = os.path.join(bringup_dir, 'config', 'nav2_params.yaml')
+    param_file = os.path.join(bringup_dir, 'config', 'nav2_params_new.yaml')
     
     configured_params = ParameterFile(
         RewrittenYaml(
