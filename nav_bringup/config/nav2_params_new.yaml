@@ -63,6 +63,7 @@ global_costmap:
 local_costmap:
   local_costmap:
     ros__parameters:
+      footprint: "[ [0.3, 0.16], [0.3, -0.16], [-0.35, -0.16], [-0.35, 0.16] ]"
       update_frequency: 5.0
       publish_frequency: 2.0
       global_frame: map
@@ -313,15 +314,15 @@ controller_server:
       vy_std: 0.2
       wz_std: 0.2  # 从0.4降低，减小噪声，使控制更平滑
       vx_max: 2.5
-      vx_min: -0.35
-      vy_max: 1.0
-      wz_max: 1.9
-      iteration_count: 2  # 从1增加，增加迭代次数提升控制效果
+      vx_min: -2.5
+      vy_max: 2.5
+      wz_max: 3.1
+      iteration_count: 1  # 从1增加，增加迭代次数提升控制效果
       prune_distance: 1.7
-      transform_tolerance: 0.2
+      transform_tolerance: 0.3
       temperature: 0.1  # 从0.3降低，降低对高成本轨迹的敏感度，提升平滑性，降低随机性
       gamma: 0.015
-      motion_model: "DiffDrive"
+      motion_model: "DiffDrive" # DiffDrive/Ackermann
       visualize: false
       reset_period: 1.0
 
@@ -361,14 +362,14 @@ controller_server:
         near_goal_distance: 0.5
         inflation_radius: 0.2 # (only in Humble)
         cost_scaling_factor: 10.0 # (only in Humble)
-      CostCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 3.81
-        critical_cost: 300.0
-        consider_footprint: true
-        collision_cost: 1000000.0
-        near_goal_distance: 1.0
+      # CostCritic:
+      #   enabled: true
+      #   cost_power: 1
+      #   cost_weight: 3.81
+      #   critical_cost: 300.0
+      #   consider_footprint: true
+      #   collision_cost: 1000000.0
+      #   near_goal_distance: 1.0
       PathAlignCritic:
         enabled: true
         cost_power: 1
@@ -401,12 +402,6 @@ controller_server:
       #   enabled: true
       #   twirling_cost_power: 1
       #   twirling_cost_weight: 10.0
-
-
-
-
-
-
 
 
 map_server:
