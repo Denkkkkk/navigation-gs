@@ -200,29 +200,50 @@ bt_navigator:
 
 # controller_server:
 #   ros__parameters:
-#     odom_topic: odometry
+#     use_sim_time: true
+#     odom_topic: "odometry"
 #     controller_frequency: 20.0
+#     robot_base_frame: "base_footprint"
+#     global_frame: "map"
+#     transform_tolerance: 0.2
+#     # 基础控制参数
+#     min_x_velocity_threshold: 0.001
+#     min_y_velocity_threshold: 0.001
+#     min_theta_velocity_threshold: 0.001
+#     progress_checker_plugin: "progress_checker"
+#     goal_checker_plugin: "goal_checker"
+    
+#     # 机器人配置
+#     robot_radius: 0.22
+    
 #     controller_plugins: ["FollowPath"]
+    
 #     FollowPath:
 #       plugin: "nav2_mppi_controller::MPPIController"
+      
+#       # 修正问题参数
 #       time_steps: 56
 #       model_dt: 0.05
 #       batch_size: 2000
-#       vx_std: 0.2
+#       iteration_count: 3  # 从 1 改为 3
+#       prune_distance: 0.5  # 从 1.7 减小
+      
+#       # 速度限制
+#       vx_std: 1.0
 #       vy_std: 0.2
 #       wz_std: 0.4
-#       vx_max: 1.0
-#       vx_min: -0.35
-#       vy_max: 1.0
+#       vx_max: 2.0
+#       vx_min: -0.25
+#       vy_max: 0.0
 #       wz_max: 1.9
-#       iteration_count: 1
-#       prune_distance: 1.7
-#       transform_tolerance: 0.1
+
+#       transform_tolerance: 0.2
 #       temperature: 0.3
 #       gamma: 0.015
 #       motion_model: "DiffDrive"
 #       visualize: false
-#       reset_period: 1.0 # (only in Humble)
+#       reset_period: 1.0
+#       # 其他配置保持不变...
 #       TrajectoryVisualizer:
 #         trajectory_step: 5
 #         time_step: 3
@@ -279,11 +300,12 @@ bt_navigator:
 #         cost_weight: 2.0
 #         offset_from_furthest: 4
 #         threshold_to_consider: 0.40
-        # max_angle_to_furthest: 1.0
-      # TwirlingCritic:
+#         max_angle_to_furthest: 1.0
+      # VelocityDeadbandCritic:
       #   enabled: true
-      #   twirling_cost_power: 1
-      #   twirling_cost_weight: 10.0
+      #   cost_power: 1
+      #   cost_weight: 100.0  # 增大这个权重来强化速度跟踪
+      #   deadband_velocities: [1.5, 0.0, 0.0]  # [vx, vy, wz] 期望速度
 
 controller_server:
   ros__parameters:
@@ -310,20 +332,20 @@ controller_server:
       time_steps: 56
       model_dt: 0.05
       batch_size: 2000
-      vx_std: 0.1  # 从0.2降低，减小噪声，使控制更平滑
-      vy_std: 0.2
-      wz_std: 0.2  # 从0.4降低，减小噪声，使控制更平滑
-      vx_max: 2.5
-      vx_min: -2.5
-      vy_max: 2.5
-      wz_max: 3.1
-      iteration_count: 1  # 从1增加，增加迭代次数提升控制效果
+      vx_std: 0.7  # 从0.2降低，减小噪声，使控制更平滑
+      vy_std: 0.0
+      wz_std: 0.4  # 从0.4降低，减小噪声，使控制更平滑
+      vx_max: 2.0
+      vx_min: -1.0
+      vy_max: 0.0
+      wz_max: 2.9
+      iteration_count: 2  # 从1增加，增加迭代次数提升控制效果
       prune_distance: 1.7
       transform_tolerance: 0.3
-      temperature: 0.1  # 从0.3降低，降低对高成本轨迹的敏感度，提升平滑性，降低随机性
+      temperature: 0.2  # 从0.3降低，降低对高成本轨迹的敏感度，提升平滑性，降低随机性
       gamma: 0.015
       motion_model: "DiffDrive" # DiffDrive/Ackermann
-      visualize: false
+      visualize: true
       reset_period: 1.0
 
       TrajectoryVisualizer:
@@ -368,23 +390,23 @@ controller_server:
         cost_weight: 3.81
         critical_cost: 300.0
         consider_footprint: true
-        collision_cost: 1000000.0
+        collision_cost: 100000.0
         near_goal_distance: 1.0
+      # 在路径上选择一个前瞻点（从当前最远到达点向前偏移 offset_from_furthest）
+      # 计算机器人当前位置与前瞻点之间的方向向量
+      # 惩罚机器人朝向与该方向向量偏差过大的轨迹
       PathAlignCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 8.0  # 从14.0显著降低,降低路径贴合强依赖
+        cost_weight: 14.0  # 从14.0显著降低,降低路径贴合强依赖
         max_path_occupancy_ratio: 0.05
         trajectory_point_step: 3
-        threshold_to_consider: 0.5
+        threshold_to_consider: 0.5  
         offset_from_furthest: 20
         use_path_orientations: false
-      PathFollowCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 3.0  # 从5.0降低,降低路径贴合强依赖
-        offset_from_furthest: 5
-        threshold_to_consider: 1.4
+      # 关注更近的前瞻点(offset_from_furthest: 4)
+      # 计算机器人朝向与路径切线方向的角度差
+      # 当角度超过 max_angle_to_furthest 时施加惩罚
       PathAngleCritic:
         enabled: true
         cost_power: 1
@@ -392,12 +414,19 @@ controller_server:
         offset_from_furthest: 4
         threshold_to_consider: 0.5
         max_angle_to_furthest: 1.0
+      PathFollowCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 3.0  # 从5.0降低,降低路径贴合强依赖
+        offset_from_furthest: 5
+        threshold_to_consider: 1.4
+
         forward_preference: true
       VelocityDeadbandCritic:
         enabled: true
         cost_power: 1
         cost_weight: 100.0  # 增大这个权重来强化速度跟踪
-        deadband_velocities: [1.5, 0.0, 0.0]  # [vx, vy, wz] 期望速度
+        deadband_velocities: [2.0, 0.0, 0.0]  # [vx, vy, wz] 期望速度
       # TwirlingCritic:
       #   enabled: true
       #   twirling_cost_power: 1
