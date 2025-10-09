@@ -332,9 +332,9 @@ controller_server:
       time_steps: 56
       model_dt: 0.05
       batch_size: 2000
-      vx_std: 0.7  # 从0.2降低，减小噪声，使控制更平滑
+      vx_std: 0.5  # 从0.2降低，减小噪声，使控制更平滑
       vy_std: 0.0
-      wz_std: 0.4  # 从0.4降低，减小噪声，使控制更平滑
+      wz_std: 0.3  # 从0.4降低，减小噪声，使控制更平滑
       vx_max: 2.0
       vx_min: -1.0
       vy_max: 0.0
@@ -374,7 +374,7 @@ controller_server:
         cost_weight: 8.0  # 增强前进偏好 
         threshold_to_consider: 0.5
       ObstaclesCritic:
-        enabled: false
+        enabled: true
         cost_power: 1
         repulsion_weight: 1.5
         critical_weight: 20.0
@@ -385,7 +385,7 @@ controller_server:
         inflation_radius: 0.2 # (only in Humble)
         cost_scaling_factor: 10.0 # (only in Humble)
       CostCritic:
-        enabled: false
+        enabled: true
         cost_power: 1
         cost_weight: 3.81
         critical_cost: 300.0
