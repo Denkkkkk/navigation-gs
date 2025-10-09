@@ -63,6 +63,15 @@ target_link_libraries(map_to_odom
   ${PCL_LIBRARIES}
 )
 
+add_executable(cmd_vel_interface src/cmd_vel_interface.cpp)
+ament_target_dependencies(cmd_vel_interface
+  rclcpp
+  geometry_msgs
+)
+target_include_directories(cmd_vel_interface PUBLIC
+  include
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -79,6 +88,7 @@ endif()
 install(TARGETS
   gazebo_sim
   map_to_odom
+  cmd_vel_interface
   DESTINATION lib/${PROJECT_NAME}
 )
 

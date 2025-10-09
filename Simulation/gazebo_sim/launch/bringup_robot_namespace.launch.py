@@ -187,6 +187,15 @@ def generate_launch_description():
         #     ('/tf_static', f'/{hub_id}/tf_static' if hub_id else '/tf_static'),
         # ] if hub_id else []
     )
+    
+    cmd_vel_interface_node = Node(
+        package='gazebo_sim',
+        executable='cmd_vel_interface',
+        name='cmd_vel_interface',
+        namespace=hub_id,
+        output='screen',
+        respawn=True,
+    )
 
     ld = LaunchDescription()
     # 添加所有声明的参数
@@ -203,5 +212,7 @@ def generate_launch_description():
     ld.add_action(rviz2_node)
     ld.add_action(robot_simulator_node)
     ld.add_action(map_to_odom_node)
+    ld.add_action(cmd_vel_interface_node)
+    
     
     return ld

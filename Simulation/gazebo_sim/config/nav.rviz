@@ -11,6 +11,7 @@ Panels:
         - /basic1/terrain_map1
         - /basic1/terrain_map1/Topic1
         - /local_costmap1
+        - /local_costmap1/Status1
         - /local_costmap1/Topic1
         - /local_costmap1/Update Topic1
         - /global_costmap1
@@ -232,7 +233,7 @@ Visualization Manager:
       Name: basic
     - Alpha: 0.699999988079071
       Class: rviz_default_plugins/Map
-      Color Scheme: costmap
+      Color Scheme: raw
       Draw Behind: false
       Enabled: true
       Name: local_costmap
@@ -247,7 +248,7 @@ Visualization Manager:
         Depth: 5
         Durability Policy: Transient Local
         History Policy: System Default
-        Reliability Policy: Best Effort
+        Reliability Policy: Reliable
         Value: /denk/local_costmap/costmap_updates
       Use Timestamp: false
       Value: true
@@ -268,7 +269,7 @@ Visualization Manager:
         Depth: 5
         Durability Policy: Transient Local
         History Policy: Keep Last
-        Reliability Policy: Best Effort
+        Reliability Policy: Reliable
         Value: /denk/global_costmap/costmap_updates
       Use Timestamp: false
       Value: true
