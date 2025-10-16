@@ -32,8 +32,8 @@ private:
         *multiplied_msg = *msg;
         
         // 将vx和az乘以2倍
-        // multiplied_msg->linear.x = msg->linear.x * 2.0;
-        // multiplied_msg->angular.z = msg->angular.z * 1.0;
+        multiplied_msg->linear.x = msg->linear.x * 2.0;
+        multiplied_msg->angular.z = msg->angular.z * 1.0;
         
         // 发布处理后的消息
         publisher_->publish(std::move(multiplied_msg));

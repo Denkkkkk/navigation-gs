@@ -7,6 +7,7 @@ from launch_ros.descriptions import ParameterFile
 from nav2_common.launch import RewrittenYaml
 from ament_index_python.packages import get_package_share_directory
 import os
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 def generate_launch_description():
     basic_dir = get_package_share_directory("basic_bringup")
@@ -34,11 +35,11 @@ def generate_launch_description():
         'pointcloud_to_laserscan.ros__parameters.target_frame': [hub_id, TextSubstitution(text="/base_footprint")]
     }
 
-    configured_params = ParameterFile(
+    configured_local_params = ParameterFile(
         RewrittenYaml(
             source_file=params_file,
             # 指定参数的命名空间根节点
-            root_key=hub_id,
+            root_key=PathJoinSubstitution([LaunchConfiguration("hub_id"), "local_costmap"]),
             # 确保参数值被正确转换为适当的类型
             convert_types=True,
             param_rewrites=param_rewrites | {"use_sim_time": use_sim_time}
@@ -46,16 +47,41 @@ def generate_launch_description():
         # 允许在参数中使用 ROS2 启动文件的替换表达式
         allow_substs=True,
     )
+    configured_global_params = ParameterFile(
+    RewrittenYaml(
+        source_file=params_file,
+        # 指定参数的命名空间根节点
+        root_key=PathJoinSubstitution([LaunchConfiguration("hub_id"), "global_costmap"]),
+        # 确保参数值被正确转换为适当的类型
+        convert_types=True,
+        param_rewrites=param_rewrites | {"use_sim_time": use_sim_time}
+    ),
+    # 允许在参数中使用 ROS2 启动文件的替换表达式
+    allow_substs=True,
+)
     
-    start_pointcloud_to_laserscan_node = Node(
+    start_pointcloud_to_laserscan_local_node = Node(
         package="pointcloud_to_laserscan",
         executable="pointcloud_to_laserscan_node",
         name="pointcloud_to_laserscan",
-        namespace=hub_id,
+        namespace=PathJoinSubstitution([LaunchConfiguration("hub_id"), "local_costmap"]),
         output="screen",
-        parameters=[configured_params, {"use_sim_time": use_sim_time}],
+        parameters=[configured_local_params, {"use_sim_time": use_sim_time}],
         remappings=[
-            ("cloud_in", "terrain_map"),
+            ("cloud_in", PathJoinSubstitution(["/",LaunchConfiguration("hub_id"), "terrain_map"])),
+            ("scan", "scan"),
+        ],
+    )
+    
+    start_pointcloud_to_laserscan_global_node = Node(
+        package="pointcloud_to_laserscan",
+        executable="pointcloud_to_laserscan_node",
+        name="pointcloud_to_laserscan",
+        namespace=PathJoinSubstitution([LaunchConfiguration("hub_id"), "global_costmap"]),
+        output="screen",
+        parameters=[configured_global_params, {"use_sim_time": use_sim_time}],
+        remappings=[
+            ("cloud_in", PathJoinSubstitution(["/",LaunchConfiguration("hub_id"), "terrain_map"])),
             ("scan", "scan"),
         ],
     )
@@ -66,6 +92,7 @@ def generate_launch_description():
     ld.add_action(declare_hub_id_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     # Add nodes to the launch description
-    ld.add_action(start_pointcloud_to_laserscan_node)
+    ld.add_action(start_pointcloud_to_laserscan_local_node)
+    ld.add_action(start_pointcloud_to_laserscan_global_node)
     
     return ld
