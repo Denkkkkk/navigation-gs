@@ -327,11 +327,11 @@ controller_server:
     
     # 机器人配置
     # robot_radius: 0.22
-    footprint: "[ [0.3, 0.16], [0.3, -0.16], [-0.35, -0.16], [-0.35, 0.16] ]"
+    footprint: "[ [0.3, 0.16], [0.3, -0.16], [-0.35, -0.16], [-0.35, 0.16] ]" # 调整车体尺寸
     controller_plugins: ["FollowPath"]
     goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.5
+      xy_goal_tolerance: 0.5        # 到点阈值
       yaw_goal_tolerance: 3.14
       stateful: True
     FollowPath:
@@ -345,7 +345,7 @@ controller_server:
       ay_min: -3.0
       az_max: 3.5
       
-      vx_std: 0.5  # 从0.2
+      vx_std: 0.5  # 从0.2   # vx方差值，调大可提速但模型精度下降
       vy_std: 0.0
       wz_std: 0.3  # 从0.4
       vx_max: 2.0
